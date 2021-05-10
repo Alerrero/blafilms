@@ -1,59 +1,41 @@
 import React, { useState, useEffect } from 'react'
 import './App.css'
-import placeholderImg from './placeholder.png'
-import { ReactComponent as ChevronLeft } from './chevron-left.svg'
-import { ReactComponent as ChevronRight } from './chevron-right.svg'
+import SearchBar from './Components/SearchBar/SearchBar'
+import FilmList from './Components/FilmList/FilmList'
+import ArrowWrapper from './Components/UI/ArrowWrapper'
 
 function App() {
-  const [searchResult, setSearchResult] = useState()
+  const [filmsList, setFilmsList] = useState('')
+  const [userInput, setUserInput] = useState('king')
+  const [pageCounter, setPageCounter] = useState(1)
 
-  useEffect(() => {
-    const search = async () => {
-      const response = await fetch(
-        'http://www.omdbapi.com/?apikey=a461e386&s=king',
-      )
+  const storeUserInput = (input) => {
+    setUserInput(input)
+    search(input, pageCounter)
+  }
 
-      const data = await response.json()
+  const storePageCounter = (counter) => {
+    setPageCounter(counter)
+    search(userInput, counter)
+  }
 
-      if (!searchResult) {
-        setSearchResult(data)
-      }
-    }
+  const search = async (input, counter) => {
+    const response = await fetch(
+      `http://www.omdbapi.com/?apikey=a461e386&s=${input}&page=${counter}`,
+    )
 
-    search()
-  })
+    setFilmsList(await response.json())
+  }
 
   return (
     <div className="App">
-      <div className="search">
-        <input type="text" placeholder="Search..." />
-        <button>Search</button>
-      </div>
-      {!searchResult ? (
+      <SearchBar storeInput={storeUserInput} />
+      {!filmsList ? (
         <p>No results yet</p>
       ) : (
-        <div className="search-results">
-          <div className="chevron">
-            <ChevronLeft />
-          </div>
-          <div className="search-results-list">
-            {searchResult.Search.map(result => (
-              <div key={result.imdbID} className="search-item">
-                <img
-                  src={result.Poster === 'N/A' ? placeholderImg : result.Poster}
-                  alt="poster"
-                />
-                <div className="search-item-data">
-                  <div className="title">{result.Title}</div>
-                  <div className="meta">{`${result.Type} | ${result.Year}`}</div>
-                </div>
-              </div>
-            ))}
-          </div>
-          <div className="chevron">
-            <ChevronRight />
-          </div>
-        </div>
+        <ArrowWrapper storeCounter={storePageCounter} >
+          <FilmList searchResult={filmsList} />
+        </ArrowWrapper>
       )}
     </div>
   )

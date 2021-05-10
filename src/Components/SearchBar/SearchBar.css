@@ -1,0 +1,27 @@
+input[type='text'] {
+  border: none;
+  line-height: 2;
+  padding: 10px;
+  font-size: 24px;
+  grid-column-start: 2;
+  border-radius: 5px 0 0 5px;
+  color: #457b9d;
+}
+
+input[type='text']:focus {
+  outline-color: #1d3557;
+}
+
+button {
+  border: none;
+  background-color: #1d3557;
+  color: #a8dadc;
+  font-size: 24px;
+  border-radius: 0 5px 5px 0;
+}
+
+.search {
+  margin-top: 50px;
+  display: grid;
+  grid-template-columns: 25% 40% 10% 25%;
+}
